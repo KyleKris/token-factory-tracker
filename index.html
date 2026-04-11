@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Token Factory Tracker - 全球AI Token经济追踪</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="header">
+    <div class="header-top">
+      <h1>Token Factory Tracker</h1>
+      <span class="subtitle">全球 AI Token 经济追踪</span>
+      <span class="update-badge" id="update-badge"></span>
+    </div>
+    <nav id="controls">
+      <div class="layer-group">
+        <span class="group-label">维度</span>
+        <button class="layer-btn" data-layer="tokenEcon">Token 产出</button>
+        <button class="layer-btn" data-layer="pricing">Token 定价</button>
+        <button class="layer-btn active" data-layer="revenue">Token 收入</button>
+        <button class="layer-btn" data-layer="revenueMix">收入结构</button>
+        <button class="layer-btn" data-layer="revenueFlow">收入流向</button>
+        <button class="layer-btn" data-layer="growth">收入增长趋势</button>
+      </div>
+    </nav>
+    <div id="company-tags"></div>
+    <details class="methodology-toggle">
+      <summary>方法论与数据说明</summary>
+      <div class="methodology-content">
+        <p><strong>Token 产出估算：</strong>日 Token 产出 = 年化收入 ÷ 加权均价 ÷ 365。加权均价假设 80% 流量来自经济/中端模型、20% 来自旗舰模型，输出 Token 占比 70%。如公司有官方 Token 产出数据（如字节跳动日均 1200 万亿 tokens），则直接采用。</p>
+        <p><strong>收入结构三分法：</strong>消费者订阅（ChatGPT Plus、Claude Pro 等）、API / 开发者（API 调用，含 Cursor、Claude Code 等间接贡献）、企业与合作伙伴（企业部署、Azure OpenAI 等大客户合同）。</p>
+        <p><strong>数据可信度分三级：</strong><span class="conf-dot conf-official"></span> 官方披露（财报/SEC 文件） <span class="conf-dot conf-reported"></span> 媒体报道（The Information 等） <span class="conf-dot conf-estimated"></span> 分析师估算（需注明假设）</p>
+        <p><strong>企业梯队划分：</strong>第一梯队为有官方财报或可靠收入数据的头部企业（Google、OpenAI、Anthropic、Microsoft 等）；第二梯队为依赖媒体报道的企业（xAI、Mistral AI 等）；第三梯队为数据有限、以估算为主的企业（百度、阿里巴巴等）。</p>
+      </div>
+    </details>
+  </header>
+
+  <main id="main">
+    <section id="viz-area">
+      <canvas id="treemap-canvas"></canvas>
+      <div id="chart-view" class="hidden"></div>
+    </section>
+    <aside id="stats-panel">
+      <div id="stats-content"></div>
+    </aside>
+  </main>
+
+  <div id="detail-overlay" class="hidden">
+    <div id="detail-modal">
+      <button id="detail-close">&times;</button>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+
+  <div id="tooltip" class="hidden"></div>
+
+  <footer id="footer">
+    <div class="footer-content">
+      <div class="footer-col">
+        <h3>数据来源</h3>
+        <ul>
+          <li>上市公司 SEC 10-K / 10-Q 财报及季度财报电话会议</li>
+          <li>CEO / CFO / 高管公开声明与媒体采访</li>
+          <li>The Information, Bloomberg, CNBC, Financial Times 等科技媒体报道</li>
+          <li>各公司官方 API 定价页面及开发者文档</li>
+          <li>SimilarWeb、Sensor Tower 等第三方流量分析平台</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>免责声明</h3>
+        <p>非上市公司收入数据多为媒体报道或分析师估算，可能存在较大误差。Token 消耗量为基于均价的反推估算，非官方数据。数据置信度通过颜色标识（🟢 官方 / 🟡 报道 / 🟠 估算）。本项目仅供研究参考，不构成投资建议。</p>
+      </div>
+      <div class="footer-col">
+        <h3>关于</h3>
+        <p>Token Factory Tracker — 全球 AI Token 经济开源数据可视化项目，追踪主要 AI 公司的 Token 产出、定价、收入及增长趋势。数据按季度更新。</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="data.js?v=4"></script>
+  <script src="treemap.js?v=4"></script>
+  <script src="charts.js?v=4"></script>
+  <script src="sankey.js?v=4"></script>
+  <script src="tooltip.js?v=4"></script>
+  <script src="detail.js?v=4"></script>
+  <script src="app.js?v=4"></script>
+</body>
+</html>

@@ -1,24 +1,60 @@
 // Token Factory Tracker - Detail Modal Module
 
 const Detail = (function() {
-  let overlay, modal, content, closeBtn;
+  let page, content, backBtn;
+  let currentCompanyId = null;
+  let suppressHashHandler = false;
 
   function init() {
-    overlay = document.getElementById('detail-overlay');
-    modal = document.getElementById('detail-modal');
+    page = document.getElementById('detail-page');
     content = document.getElementById('detail-content');
-    closeBtn = document.getElementById('detail-close');
+    backBtn = document.getElementById('detail-back');
 
-    closeBtn.addEventListener('click', hide);
-    overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) hide();
+    backBtn.addEventListener('click', () => {
+      // Use history.back if we pushed into history, else just clear hash
+      if (currentCompanyId) {
+        history.back();
+      } else {
+        hide();
+      }
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') hide();
+      if (e.key === 'Escape' && currentCompanyId) {
+        history.back();
+      }
     });
+    window.addEventListener('hashchange', handleHashChange);
+
+    // Honor initial hash (e.g. shared link or page refresh)
+    handleHashChange();
+  }
+
+  function handleHashChange() {
+    if (suppressHashHandler) return;
+    const m = location.hash.match(/^#\/company\/([\w-]+)$/);
+    if (m) {
+      const company = TOKEN_DATA.companies.find(c => c.id === m[1]);
+      if (company) {
+        render(company);
+        return;
+      }
+    }
+    hide();
   }
 
   function show(company) {
+    // Entry point from clicks: push a new history entry so browser back works
+    const newHash = '#/company/' + company.id;
+    if (location.hash !== newHash) {
+      suppressHashHandler = true;
+      location.hash = newHash;
+      // Release flag after hashchange fires
+      setTimeout(() => { suppressHashHandler = false; }, 0);
+    }
+    render(company);
+  }
+
+  function render(company) {
     const countryFlags = { US: '🇺🇸', CN: '🇨🇳', FR: '🇫🇷' };
     const countryNames = { US: '美国', CN: '中国', FR: '法国' };
     const confNames = { official: '官方', reported: '报道', estimated: '估算', confident: '较可靠', likely: '可能' };
@@ -155,8 +191,14 @@ const Detail = (function() {
     }
 
     content.innerHTML = html;
-    overlay.classList.remove('hidden');
-    modal.classList.add('animate-in');
+    currentCompanyId = company.id;
+
+    // Swap main dashboard for detail page
+    document.getElementById('main').classList.add('hidden');
+    document.body.classList.add('detail-active');
+    page.classList.remove('hidden');
+    page.classList.add('animate-in');
+    window.scrollTo(0, 0);
 
     // Draw charts after DOM update
     setTimeout(() => {
@@ -167,7 +209,10 @@ const Detail = (function() {
   }
 
   function hide() {
-    overlay.classList.add('hidden');
+    page.classList.add('hidden');
+    document.getElementById('main').classList.remove('hidden');
+    document.body.classList.remove('detail-active');
+    currentCompanyId = null;
   }
 
   function drawRevenueChart(company) {
